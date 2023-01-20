@@ -1,18 +1,27 @@
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ScoreTrackerComponent } from './score-tracker/score-tracker.component';
+import { TeamsService } from './score-tracker/teams.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ScoreTrackerComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+	CommonModule,
+	HttpClientModule
   ],
-  providers: [],
+  providers: [
+	TeamsService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
