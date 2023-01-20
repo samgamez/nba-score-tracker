@@ -1,3 +1,4 @@
 export interface Team {
-	name: string
+	name: string;
+	city: string;
 }
