@@ -27,6 +27,12 @@ export class ScoreTrackerComponent implements OnInit {
 	trackTeam(team?: Team): void {
 		if (team && !this.trackedTeams.includes(team)) {
 			this.trackedTeams.push(team);
+
+			// get team game data
+			this.teamsService.gameHistory(26)
+			.subscribe(response => {
+				team.teamGameHistory = response;
+			});
 		}
 	}
 

@@ -16,10 +16,11 @@
 </form>
 
 <div class="row" *ngFor="let team of trackedTeams">
-	<div class="col-1">{{team.id}}</div>
+	<pre>{{team | json}}</pre>
+	<!-- <div class="col-1">{{team.id}}</div>
 	<div class="col-2">{{team.city}}</div>
 	<div class="col-2">{{team.name}}</div>
 	<div class="col-2">
 		<button type="button" class="btn btn-link link-danger" (click)="removeTrackedTeam(team)">&times;</button>
-	</div>
+	</div> -->
 </div>
