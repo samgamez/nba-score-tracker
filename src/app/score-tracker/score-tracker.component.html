@@ -1,24 +1,21 @@
-<div class="container">
-	<h1>NBA Score Tracker</h1>
-	<form class="row mb-3" (ngSubmit)="trackTeam(selectedTeamId)">
-		<div class="col">
-			<select id="teamInput" class="form-control" name="selectedTeam" [(ngModel)]="selectedTeamId">
-				<option value=""></option>
-				<option *ngFor="let team of teamOptions" [ngValue]="team">
-					{{team.city}} {{team.name}}
-				</option>
-			</select>
-		</div>
-		<div class="col">
-			<button class="btn btn-primary" id="trackBtn" type="submit">
-				Add team
-			</button>
-		</div>
-	</form>
+<form class="row mb-3" (ngSubmit)="trackTeam(selectedTeamId)">
+	<div class="col">
+		<select id="teamInput" class="form-control" name="selectedTeam" [(ngModel)]="selectedTeamId">
+			<option value=""></option>
+			<option *ngFor="let team of teamOptions" [ngValue]="team">
+				{{team.city}} {{team.name}}
+			</option>
+		</select>
+	</div>
+	<div class="col">
+		<button class="btn btn-primary" id="trackBtn" type="submit">
+			Add team
+		</button>
+	</div>
+</form>
 
-	<div class="row">
-		<div class="col-sm-6" *ngFor="let team of trackedTeams">
-			<nst-team [team]="team" (remove)="removeTrackedTeam($event)"></nst-team>
-		</div>
+<div class="row">
+	<div class="col-sm-6" *ngFor="let team of trackedTeams">
+		<nst-team [team]="team" (remove)="removeTrackedTeam($event)"></nst-team>
 	</div>
 </div>

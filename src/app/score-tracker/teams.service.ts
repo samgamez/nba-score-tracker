@@ -18,13 +18,22 @@ export class TeamsService {
 		};
 		return this.http.get<{ data: Team[] }>(`${this.url}/teams`, options)
 		.pipe(
-			tap(response => console.log(response)),
 			map(response => response.data),
 			catchError(this.handleError<Team[]>('teams')));
 	}
 
+	team(teamId: number): Observable<Team> {
+		const options = {
+			headers: this.nbaApiHeaders()
+		};
+		
+		return this.http.get<Team>(`${this.url}/teams/${teamId}`, options)
+		.pipe(
+			catchError(this.handleError<Team>('team')));
+	}
+
 	gameHistory(teamId: number): Observable<TeamGameHistory> {
-		var options = {
+		const options = {
 			headers: this.nbaApiHeaders(),
 			params: this.gameHistoryParams(teamId)
 		};

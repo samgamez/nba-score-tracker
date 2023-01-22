@@ -1,1 +1,23 @@
-<p>results works!</p>
+<div class="card border-secondary"*ngIf="team">
+	<div class="card-body">
+		<h5 class="card-title">{{team.city}} {{team.name}} [{{team.abbreviation}}]</h5>
+		<h6 class="card-subtitle mb-2 text-muted border-bottom border-1 border-secondary">{{team.conference}} Conference</h6>
+		<div class="my-2">Scores of the past 12 days:</div>
+		<div *ngFor="let game of team.gameHistory?.games" class="my-1">
+			<span class="fw-bold">{{game.team.abbreviation}}</span> {{game.teamScore}} - 
+			{{game.opposingTeamScore}} <span class="fw-bold">{{game.opposingTeam.abbreviation}}</span>
+		</div>
+		<div [hidden]="(team.gameHistory?.games?.length || 0) > 0">
+			<div class="alert alert-info">
+				No games in the past 12 days
+			</div>
+		</div>
+		<div>
+			<a class="btn btn-success" [routerLink]="['']">&lt;&lt; Back to all team stats</a>
+		</div>
+</div>
+<div *ngIf="!team">
+	<div class="alert alert-danger">
+		No team found
+	</div>
+</div>
