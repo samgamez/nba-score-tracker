@@ -28,11 +28,15 @@ export class ScoreTrackerComponent implements OnInit {
 		if (team && !this.trackedTeams.includes(team)) {
 			this.trackedTeams.push(team);
 
+			console.log(team);
+
 			// get team game data
-			this.teamsService.gameHistory(26)
+			this.teamsService.gameHistory(team.id)
 			.subscribe(response => {
-				team.teamGameHistory = response;
+				team.gameHistory = response;
 			});
+
+			this.selectedTeamId = undefined;
 		}
 	}
 

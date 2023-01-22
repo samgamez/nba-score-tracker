@@ -8,11 +8,15 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ScoreTrackerComponent } from './score-tracker/score-tracker.component';
 import { TeamsService } from './score-tracker/teams.service';
+import { TeamComponent } from './score-tracker/team/team.component';
+import { ResultsComponent } from './score-tracker/results/results.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ScoreTrackerComponent
+    ScoreTrackerComponent,
+    TeamComponent,
+    ResultsComponent
   ],
   imports: [
 	FormsModule,

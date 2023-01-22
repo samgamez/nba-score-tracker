@@ -4,6 +4,9 @@ export interface Team {
 	id: number;
 	name: string;
 	city: string;
+	abbreviation: string;
+	conference: string;
 
-	teamGameHistory: TeamGameHistory
+
+	gameHistory?: TeamGameHistory
 }
