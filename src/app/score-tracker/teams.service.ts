@@ -50,11 +50,11 @@ export class TeamsService {
 		let refDate: Date = new Date(); // Reference date
 
 		for (let i = 0; i < 12; i++) {
-			let dateString: string = formatDate(refDate, 'yyyy-MM-dd', 'en-us');
-			dateStrings.push(dateString);
-
 			// Subtract 1 date from the reference date
 			refDate.setDate(refDate.getDate()-1);
+			
+			let dateString: string = formatDate(refDate, 'yyyy-MM-dd', 'en-us');
+			dateStrings.push(dateString);
 		}
 		
 		const paramOptions: HttpParamsOptions = { fromObject: {'dates[]': dateStrings, 'team_ids[]': [teamId] }};
