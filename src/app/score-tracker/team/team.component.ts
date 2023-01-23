@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Team } from '../team.model';
+import { Team } from '../model/team.model';
 
 @Component({
   selector: 'nst-team',
@@ -16,8 +16,13 @@ export class TeamComponent {
 	};
 
 	@Output() remove: EventEmitter<Team> = new EventEmitter<Team>();
+	@Output() resultsClick: EventEmitter<void> = new EventEmitter<void>();
 
 	onRemove(): void {
 		this.remove.emit(this.team);
+	}
+
+	onResultsClick(): void {
+		this.resultsClick.emit();
 	}
 }

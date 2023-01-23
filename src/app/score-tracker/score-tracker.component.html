@@ -1,6 +1,6 @@
-<form class="row mb-3" (ngSubmit)="trackTeam(selectedTeamId)">
+<form class="row mb-3" (ngSubmit)="trackTeam(selectedTeam)">
 	<div class="col">
-		<select id="teamInput" class="form-control" name="selectedTeam" [(ngModel)]="selectedTeamId">
+		<select id="teamInput" class="form-control" name="selectedTeam" [(ngModel)]="selectedTeam">
 			<option value=""></option>
 			<option *ngFor="let team of teamOptions" [ngValue]="team">
 				{{team.city}} {{team.name}}
@@ -16,6 +16,6 @@
 
 <div class="row">
 	<div class="col-sm-6" *ngFor="let team of trackedTeams">
-		<nst-team [team]="team" (remove)="removeTrackedTeam($event)"></nst-team>
+		<nst-team [team]="team" (remove)="removeTrackedTeam($event)" (resultsClick)="storeData()"></nst-team>
 	</div>
 </div>

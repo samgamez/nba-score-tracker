@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Team } from './team.model';
+import { Team } from './model/team.model';
+import { StateService } from './state.service';
 import { TeamsService } from './teams.service';
 
 @Component({
@@ -12,10 +13,18 @@ export class ScoreTrackerComponent implements OnInit {
 
 	trackedTeams: Team[] = [];
 
-	selectedTeamId?: Team;
+	selectedTeam?: Team;
 
-	constructor(private teamsService: TeamsService) { }
+	constructor(private teamsService: TeamsService, private stateService: StateService<{teamOptions: Team[], trackedTeams: Team[], selectedTeam?: Team}>) { }
 	ngOnInit(): void {
+		const savedData = this.stateService.retrieve();
+		
+		if (savedData){
+			this.teamOptions = savedData.teamOptions;
+			this.trackedTeams = savedData.trackedTeams;
+			this.selectedTeam = savedData.selectedTeam;
+		}
+
 		this.teamsService.teams()
 		.subscribe(result => {
 			this.teamOptions = result;
@@ -36,7 +45,7 @@ export class ScoreTrackerComponent implements OnInit {
 				team.gameHistory = response;
 			});
 
-			this.selectedTeamId = undefined;
+			this.selectedTeam = undefined;
 		}
 	}
 
@@ -44,5 +53,9 @@ export class ScoreTrackerComponent implements OnInit {
 		if (this.trackedTeams.includes(team)){
 			this.trackedTeams.splice(this.trackedTeams.indexOf(team), 1);
 		}
+	}
+
+	storeData(): void {
+		this.stateService.store({teamOptions: this.teamOptions, trackedTeams: this.trackedTeams, selectedTeam: this.selectedTeam});
 	}
 }

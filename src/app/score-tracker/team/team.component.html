@@ -16,7 +16,7 @@
 				<div class="my-2">Avg points scored: {{team.gameHistory?.averageScore | number: '1.0-2'}}</div>
 				<div class="my-2">Avg points conceded: {{team.gameHistory?.averageConceded | number: '1.0-2'}}</div>
 				<div class="mt-3">
-					<a id="results{{team.abbreviation}}" class="btn btn-success" [routerLink]="['/results', team.id]">See Game Results &gt;&gt;</a>
+					<a id="results{{team.abbreviation}}" class="btn btn-success" [routerLink]="['/results', team.id]" (click)="onResultsClick()">See Game Results &gt;&gt;</a>
 				</div>
 			</div>
 			<div class="col">

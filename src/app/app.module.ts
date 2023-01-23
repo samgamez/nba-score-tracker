@@ -10,6 +10,7 @@ import { ScoreTrackerComponent } from './score-tracker/score-tracker.component';
 import { TeamsService } from './score-tracker/teams.service';
 import { TeamComponent } from './score-tracker/team/team.component';
 import { ResultsComponent } from './score-tracker/results/results.component';
+import { StateService } from './score-tracker/state.service';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ResultsComponent } from './score-tracker/results/results.component';
 	HttpClientModule
   ],
   providers: [
-	TeamsService
+	TeamsService,
+	StateService
   ],
   bootstrap: [AppComponent]
 })

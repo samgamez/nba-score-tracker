@@ -1,4 +1,4 @@
-import { TeamGame } from "./team-game.model";
+import { TeamGame } from "./model/team-game.model";
 
 
 export interface TeamGameHistory {

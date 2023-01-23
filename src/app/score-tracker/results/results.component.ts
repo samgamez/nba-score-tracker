@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { TeamGameHistory } from '../team-game-history.model';
-import { Team } from '../team.model';
+import { Team } from '../model/team.model';
 import { TeamsService } from '../teams.service';
 
 @Component({

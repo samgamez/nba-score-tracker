@@ -1,11 +1,11 @@
 import { Injectable, LOCALE_ID } from "@angular/core";
 import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
 import { catchError, map, Observable, of, tap } from "rxjs";
-import { Team } from "./team.model";
+import { Team } from "./model/team.model";
 import { formatDate } from "@angular/common";
 import { TeamGameHistory } from "./team-game-history.model";
-import { Game } from "./game.model";
-import { TeamGame } from "./team-game.model";
+import { Game } from "./model/game.model";
+import { TeamGame } from "./model/team-game.model";
 
 @Injectable()
 export class TeamsService {
