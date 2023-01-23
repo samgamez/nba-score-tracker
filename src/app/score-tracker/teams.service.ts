@@ -19,14 +19,14 @@ export class TeamsService {
 		return this.http.get<NbaApiResponse>(`${this.url}/teams`, options)
 		.pipe(
 			map((response: NbaApiResponse) => response.data as Team[]),
-			catchError(this.handleError<Team[]>('teams')));
+			catchError(this.handleError<Team[]>('An error occurred while loading teams')));
 	}
 
 	team(teamId: number): Observable<Team> {
 		const options: NbaApiRequest = { headers: this.nbaApiHeaders() };
 		return this.http.get<Team>(`${this.url}/teams/${teamId}`, options)
 		.pipe(
-			catchError(this.handleError<Team>('team')));
+			catchError(this.handleError<Team>('An error occurred while looking up team')));
 	}
 
 	gameHistory(teamId: number): Observable<TeamGameHistory> {
@@ -34,7 +34,7 @@ export class TeamsService {
 		return this.http.get<NbaApiResponse>(`${this.url}/games`, options)
 		.pipe(
 			map((response: NbaApiResponse) => this.mapGameHistory((response.data as Game[]), teamId)),
-			catchError(this.handleError<TeamGameHistory>('gameHistory')));
+			catchError(this.handleError<TeamGameHistory>('An error occurred while getting team\'s game history for the past 12 days')));
 	}
 
 	private nbaApiHeaders(): HttpHeaders {
@@ -107,10 +107,10 @@ export class TeamsService {
 
 	}
 
-	private handleError<T> (operation = 'operation'): { (error: string): Observable<T> } {
-		// TODO: Handle the error with something like toastr
+	private handleError<T> (message: string): { (error: string): Observable<T> } {
+		// Log error in the console and return an observable
 		return (error: string): Observable<T> => {
-			console.error(error);
+			console.error(message, error);
 			return of({} as T);
 		} 
 	}
