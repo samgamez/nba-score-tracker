@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
-import { TeamGameHistory } from '../team-game-history.model';
+import { TeamGameHistory } from '../model/team-game-history.model';
 import { Team } from '../model/team.model';
 import { TeamsService } from '../teams.service';
 
@@ -25,7 +25,7 @@ export class ResultsComponent implements OnInit {
 			let teamIdString: string | null = params.get('teamCode');
 
 			if (teamIdString){
-				const teamId = Number(teamIdString);
+				const teamId: number = Number(teamIdString);
 				forkJoin([this.teamsService.team(teamId), this.teamsService.gameHistory(teamId)])
 				.subscribe((results: [Team, TeamGameHistory]) => {
 					this.team = results[0];

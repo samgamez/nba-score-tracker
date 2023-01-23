@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ScoreTrackerState } from './model/score-tracker-state.model';
+import { TeamGameHistory } from './model/team-game-history.model';
 import { Team } from './model/team.model';
 import { StateService } from './state.service';
 import { TeamsService } from './teams.service';
@@ -15,21 +17,21 @@ export class ScoreTrackerComponent implements OnInit {
 
 	selectedTeam?: Team;
 
-	constructor(private teamsService: TeamsService, private stateService: StateService<{teamOptions: Team[], trackedTeams: Team[], selectedTeam?: Team}>) { }
+	constructor(private teamsService: TeamsService, private stateService: StateService<ScoreTrackerState>) { }
 	ngOnInit(): void {
-		const savedData = this.stateService.retrieve();
-		
+		// Check for saved state of component
+		const savedData: ScoreTrackerState | undefined = this.stateService.retrieve();
+
 		if (savedData){
 			this.teamOptions = savedData.teamOptions;
 			this.trackedTeams = savedData.trackedTeams;
 			this.selectedTeam = savedData.selectedTeam;
 		}
 
+		// Load team options
 		this.teamsService.teams()
-		.subscribe(result => {
+		.subscribe((result: Team[]) => {
 			this.teamOptions = result;
-
-			console.log(this.teamOptions);
 		});
 	}
 
@@ -37,11 +39,9 @@ export class ScoreTrackerComponent implements OnInit {
 		if (team && !this.trackedTeams.includes(team)) {
 			this.trackedTeams.push(team);
 
-			console.log(team);
-
 			// get team game data
 			this.teamsService.gameHistory(team.id)
-			.subscribe(response => {
+			.subscribe((response: TeamGameHistory) => {
 				team.gameHistory = response;
 			});
 
@@ -49,13 +49,15 @@ export class ScoreTrackerComponent implements OnInit {
 		}
 	}
 
-	removeTrackedTeam(team: Team){
+	removeTrackedTeam(team: Team): void{
 		if (this.trackedTeams.includes(team)){
 			this.trackedTeams.splice(this.trackedTeams.indexOf(team), 1);
 		}
 	}
 
 	storeData(): void {
-		this.stateService.store({teamOptions: this.teamOptions, trackedTeams: this.trackedTeams, selectedTeam: this.selectedTeam});
+		const stateObj: ScoreTrackerState = {teamOptions: this.teamOptions, trackedTeams: this.trackedTeams, selectedTeam: this.selectedTeam};
+		// Save component state
+		this.stateService.store(stateObj);
 	}
 }

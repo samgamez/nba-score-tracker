@@ -8,9 +8,9 @@
 				<div class="my-3">
 					<div>Results for the past 12 days:</div>
 					<span *ngFor="let game of team.gameHistory?.games">
-						<span class="badge bg-success" [hidden]="game.teamScore <= game.opposingTeamScore">W</span>
-						<span class="badge bg-danger" [hidden]="game.teamScore >= game.opposingTeamScore">L</span>
-						<span class="badge bg-secondary" [hidden]="game.teamScore !== game.opposingTeamScore">D</span>
+						<span class="badge bg-success" [hidden]="game.teamScore <= game.opposingTeamScore" title="Win">W</span>
+						<span class="badge bg-danger" [hidden]="game.teamScore >= game.opposingTeamScore" title="Loss">L</span>
+						<span class="badge bg-secondary" [hidden]="game.teamScore !== game.opposingTeamScore" title="Draw">D</span>
 					</span>
 				</div>
 				<div class="my-2">Avg points scored: {{team.gameHistory?.averageScore | number: '1.0-2'}}</div>

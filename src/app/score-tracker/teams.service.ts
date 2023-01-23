@@ -1,11 +1,13 @@
-import { Injectable, LOCALE_ID } from "@angular/core";
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpHeaders, HttpParams, HttpParamsOptions } from "@angular/common/http";
 import { catchError, map, Observable, of, tap } from "rxjs";
 import { Team } from "./model/team.model";
 import { formatDate } from "@angular/common";
-import { TeamGameHistory } from "./team-game-history.model";
+import { TeamGameHistory } from "./model/team-game-history.model";
 import { Game } from "./model/game.model";
 import { TeamGame } from "./model/team-game.model";
+import { NbaApiRequest } from "./model/nba-api-request.model";
+import { NbaApiResponse } from "./model/nba-api-response.model";
 
 @Injectable()
 export class TeamsService {
@@ -13,38 +15,30 @@ export class TeamsService {
 	constructor(private http: HttpClient) {	}
 
 	teams(): Observable<Team[]> {
-		const options = {
-			headers: this.nbaApiHeaders()
-		};
-		return this.http.get<{ data: Team[] }>(`${this.url}/teams`, options)
+		const options: NbaApiRequest = { headers: this.nbaApiHeaders() };
+		return this.http.get<NbaApiResponse>(`${this.url}/teams`, options)
 		.pipe(
-			map(response => response.data),
+			map((response: NbaApiResponse) => response.data as Team[]),
 			catchError(this.handleError<Team[]>('teams')));
 	}
 
 	team(teamId: number): Observable<Team> {
-		const options = {
-			headers: this.nbaApiHeaders()
-		};
-		
+		const options: NbaApiRequest = { headers: this.nbaApiHeaders() };
 		return this.http.get<Team>(`${this.url}/teams/${teamId}`, options)
 		.pipe(
 			catchError(this.handleError<Team>('team')));
 	}
 
 	gameHistory(teamId: number): Observable<TeamGameHistory> {
-		const options = {
-			headers: this.nbaApiHeaders(),
-			params: this.gameHistoryParams(teamId)
-		};
-
-		return this.http.get<{ data: Game[] }>(`${this.url}/games`, options)
+		const options: NbaApiRequest = { headers: this.nbaApiHeaders(), params: this.gameHistoryParams(teamId) };
+		return this.http.get<NbaApiResponse>(`${this.url}/games`, options)
 		.pipe(
-			map(response => this.mapGameHistory(response.data, teamId)),
+			map((response: NbaApiResponse) => this.mapGameHistory((response.data as Game[]), teamId)),
 			catchError(this.handleError<TeamGameHistory>('gameHistory')));
 	}
 
 	private nbaApiHeaders(): HttpHeaders {
+		// Return api headders used by free NBA API
 		return new HttpHeaders({ 
 			'X-RapidAPI-Key':'2QMXSehDLSmshDmRQcKUIAiQjIZAp1UvKUrjsnewgqSP6F5oBX',
 			'X-RapidAPI-Host': 'free-nba.p.rapidapi.com'
@@ -52,27 +46,28 @@ export class TeamsService {
 	}
 
 	private gameHistoryParams(teamId: number): HttpParams {
-		let dates = [];
-		let refDate = new Date(); // Reference date
+		let dateStrings: string[] = [];
+		let refDate: Date = new Date(); // Reference date
 
 		for (let i = 0; i < 12; i++) {
-			let dateString = formatDate(refDate, 'yyyy-MM-dd', 'en-us');
-			dates.push(dateString);
+			let dateString: string = formatDate(refDate, 'yyyy-MM-dd', 'en-us');
+			dateStrings.push(dateString);
 
 			// Subtract 1 date from the reference date
 			refDate.setDate(refDate.getDate()-1);
 		}
 		
-		return new HttpParams({ fromObject: {'dates[]': dates, 'team_ids[]': [teamId] }});
+		const paramOptions: HttpParamsOptions = { fromObject: {'dates[]': dateStrings, 'team_ids[]': [teamId] }};
+		return new HttpParams(paramOptions);
 	}
 
 	private mapGameHistory(games: Game[], teamId: number): TeamGameHistory {
 		// Create games from the teams perspective
 		let teamGames: TeamGame[] = games.map(g => {
-			let team,
-				teamScore,
-				opposingTeam,
-				opposingTeamScore;
+			let team: Team,
+				teamScore: number,
+				opposingTeam: Team,
+				opposingTeamScore: number;
 			if (g.home_team.id === teamId) {
 				team = g.home_team;
 				teamScore = g.home_team_score;
@@ -86,39 +81,43 @@ export class TeamsService {
 				opposingTeamScore = g.home_team_score;
 			}
 
-			return {
+			const teamGame: TeamGame = {
 				team,
 				teamScore,
 				opposingTeam,
 				opposingTeamScore
 			};
+
+			return teamGame;
 		});
 
 		// Calculate average score
-		
-		let averageScore = this.average(teamGames.map(g => g.teamScore));
+		let averageScore: number = this.average(teamGames.map(g => g.teamScore));
 
 		// Calculate average pointes conceded
-		let averageConceded = this.average(teamGames.map(g => g.teamScore));
+		let averageConceded: number = this.average(teamGames.map(g => g.teamScore));
 
-		return {
+		const result: TeamGameHistory = {
 			games: teamGames,
 			averageScore: averageScore,
 			averageConceded: averageConceded
 		};
 
+		return result;
+
 	}
 
-	private handleError<T> (operation = 'operation', result?: T) {
+	private handleError<T> (operation = 'operation'): { (error: string): Observable<T> } {
 		// TODO: Handle the error with something like toastr
 		return (error: string): Observable<T> => {
 			console.error(error);
-			return of(result as T);
+			return of({} as T);
 		} 
 	}
 
 	private average(numbers: number[]): number{
-		let sum = numbers.reduce((a, b) => a + b, 0);
+		// Get the averagge by adding the values of the number list together and then dividing the sum by the length of the list
+		let sum: number = numbers.reduce((a, b) => a + b, 0);
 		return sum / numbers.length;
 	}
 }
