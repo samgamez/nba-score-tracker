@@ -20,6 +20,7 @@ import { StateService } from './score-tracker/state.service';
     ResultsComponent
   ],
   imports: [
+	CommonModule,
 	FormsModule,
     BrowserModule,
     AppRoutingModule,

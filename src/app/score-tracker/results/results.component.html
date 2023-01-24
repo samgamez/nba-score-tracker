@@ -1,3 +1,6 @@
+<div *ngIf="errorMessages.length > 0">
+	<div class="alert alert-danger" *ngFor="let message of errorMessages">{{message}}</div>
+</div>
 <div class="card border-secondary"*ngIf="team">
 	<div class="card-body">
 		<h5 class="card-title">{{team.city}} {{team.name}} [{{team.abbreviation}}]</h5>
@@ -5,7 +8,10 @@
 		<div class="my-2">Scores of the past 12 days:</div>
 		<div *ngFor="let game of team.gameHistory?.games" class="my-1">
 			<span class="fw-bold">{{game.team.abbreviation}}</span> {{game.teamScore}} - 
-			{{game.opposingTeamScore}} <span class="fw-bold">{{game.opposingTeam.abbreviation}}</span>
+			{{game.opposingTeamScore}} <span class="fw-bold">{{game.opposingTeam.abbreviation}}</span>&nbsp;
+			<span class="badge bg-success" [hidden]="game.teamScore <= game.opposingTeamScore" title="Win">W</span>
+			<span class="badge bg-danger" [hidden]="game.teamScore >= game.opposingTeamScore" title="Loss">L</span>
+			<span class="badge bg-secondary" [hidden]="game.teamScore !== game.opposingTeamScore" title="Draw">D</span>
 		</div>
 		<div [hidden]="(team.gameHistory?.games?.length || 0) > 0">
 			<div class="alert alert-info">

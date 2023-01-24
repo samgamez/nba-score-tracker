@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpResult } from './model/http-result.model';
 import { ScoreTrackerState } from './model/score-tracker-state.model';
 import { TeamGameHistory } from './model/team-game-history.model';
 import { Team } from './model/team.model';
@@ -17,6 +18,8 @@ export class ScoreTrackerComponent implements OnInit {
 
 	selectedTeam?: Team;
 
+	errorMessages: string[] = [];
+
 	constructor(private teamsService: TeamsService, private stateService: StateService<ScoreTrackerState>) { }
 	ngOnInit(): void {
 		// Check for saved state of component
@@ -30,8 +33,13 @@ export class ScoreTrackerComponent implements OnInit {
 
 		// Load team options
 		this.teamsService.teams()
-		.subscribe((result: Team[]) => {
-			this.teamOptions = result;
+		.subscribe((result: HttpResult<Team[]>) => {
+			if (result.errorMessage){
+				this.errorMessages.push(result.errorMessage);
+			}
+			else if (result.data) {
+				this.teamOptions = result.data || [];
+			}
 		});
 	}
 
@@ -41,8 +49,13 @@ export class ScoreTrackerComponent implements OnInit {
 
 			// get team game data
 			this.teamsService.gameHistory(team.id)
-			.subscribe((response: TeamGameHistory) => {
-				team.gameHistory = response;
+			.subscribe((result: HttpResult<TeamGameHistory>) => {
+				if (result.errorMessage) {
+					this.errorMessages.push(result.errorMessage);
+				}
+				else if (result.data){
+					team.gameHistory = result.data || [];
+				}
 			});
 
 			this.selectedTeam = undefined;
@@ -51,6 +64,7 @@ export class ScoreTrackerComponent implements OnInit {
 
 	removeTrackedTeam(team: Team): void{
 		if (this.trackedTeams.includes(team)){
+			// Remove team from tracked teams
 			this.trackedTeams.splice(this.trackedTeams.indexOf(team), 1);
 		}
 	}

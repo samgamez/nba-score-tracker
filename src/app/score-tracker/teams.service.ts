@@ -8,32 +8,34 @@ import { Game } from "./model/game.model";
 import { TeamGame } from "./model/team-game.model";
 import { NbaApiRequest } from "./model/nba-api-request.model";
 import { NbaApiResponse } from "./model/nba-api-response.model";
+import { HttpResult } from "./model/http-result.model";
 
 @Injectable()
 export class TeamsService {
 	private url = 'https://free-nba.p.rapidapi.com';
 	constructor(private http: HttpClient) {	}
 
-	teams(): Observable<Team[]> {
+	teams(): Observable<HttpResult<Team[]>> {
 		const options: NbaApiRequest = { headers: this.nbaApiHeaders() };
 		return this.http.get<NbaApiResponse>(`${this.url}/teams`, options)
 		.pipe(
-			map((response: NbaApiResponse) => response.data as Team[]),
+			map((response: NbaApiResponse) => { return { data: response.data as Team[] }; }),
 			catchError(this.handleError<Team[]>('An error occurred while loading teams')));
 	}
 
-	team(teamId: number): Observable<Team> {
+	team(teamId: number): Observable<HttpResult<Team>> {
 		const options: NbaApiRequest = { headers: this.nbaApiHeaders() };
 		return this.http.get<Team>(`${this.url}/teams/${teamId}`, options)
 		.pipe(
+			map((result: Team) => { return { data: result }; }),
 			catchError(this.handleError<Team>('An error occurred while looking up team')));
 	}
 
-	gameHistory(teamId: number): Observable<TeamGameHistory> {
+	gameHistory(teamId: number): Observable<HttpResult<TeamGameHistory>> {
 		const options: NbaApiRequest = { headers: this.nbaApiHeaders(), params: this.gameHistoryParams(teamId) };
 		return this.http.get<NbaApiResponse>(`${this.url}/games`, options)
 		.pipe(
-			map((response: NbaApiResponse) => this.mapGameHistory((response.data as Game[]), teamId)),
+			map((response: NbaApiResponse) => { return { data: this.mapGameHistory((response.data as Game[]), teamId) }; }),
 			catchError(this.handleError<TeamGameHistory>('An error occurred while getting team\'s game history for the past 12 days')));
 	}
 
@@ -53,10 +55,12 @@ export class TeamsService {
 			// Subtract 1 date from the reference date
 			refDate.setDate(refDate.getDate()-1);
 			
+			// Add reference date to list
 			let dateString: string = formatDate(refDate, 'yyyy-MM-dd', 'en-us');
 			dateStrings.push(dateString);
 		}
 		
+		// Create params with arrays
 		const paramOptions: HttpParamsOptions = { fromObject: {'dates[]': dateStrings, 'team_ids[]': [teamId] }};
 		return new HttpParams(paramOptions);
 	}
@@ -81,6 +85,7 @@ export class TeamsService {
 				opposingTeamScore = g.home_team_score;
 			}
 
+			// Create team game
 			const teamGame: TeamGame = {
 				team,
 				teamScore,
@@ -107,11 +112,12 @@ export class TeamsService {
 
 	}
 
-	private handleError<T> (message: string): { (error: string): Observable<T> } {
-		// Log error in the console and return an observable
-		return (error: string): Observable<T> => {
-			console.error(message, error);
-			return of({} as T);
+	private handleError<T> (message: string): { (error: string): Observable<HttpResult<T>> } {
+		// Log error in the console and return an observable with error data
+		return (error: string): Observable<HttpResult<T>> => {
+			console.error(`${message}: `, error);
+			const result: HttpResult<T> = { errorMessage: message };
+			return of(result);
 		} 
 	}
 

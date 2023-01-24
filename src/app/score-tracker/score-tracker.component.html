@@ -1,3 +1,6 @@
+<div *ngIf="errorMessages.length > 0">
+	<div class="alert alert-danger" *ngFor="let message of errorMessages">{{message}}</div>
+</div>
 <form class="row mb-3" (ngSubmit)="trackTeam(selectedTeam)">
 	<div class="col">
 		<select id="teamInput" class="form-control" name="selectedTeam" [(ngModel)]="selectedTeam">
